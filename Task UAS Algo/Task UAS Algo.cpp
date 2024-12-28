@@ -1,584 +1,322 @@
 #include <iostream>
 #include <string>
-#include <ctime>
-#include <iomanip>
 using namespace std;
 
-// Struct definitions
-struct Produk {
-    string nama;
-    int stok;
-    double harga;
-};
-
-struct Toko {
-    string nama;
-    string alamat;
-    string telepon;
-};
-
-struct Transaksi {
-    time_t waktu;
-    string jenis;
-    string namaProduk;
-    string namaToko;
-    int jumlah;
-    double harga;
-};
-
-// Global variables
-Produk produk[100];
-Toko toko[100];
-Transaksi transaksi[1000];
+// Global arrays
+string namaProduk[100];
+int stokProduk[100];
+double hargaProduk[100];
 int jumlahProduk = 0;
-int jumlahToko = 0;
-int jumlahTransaksi = 0;
 
-// Function declarations
-void tambahProduk();
-void tambahToko();
-void tambahStok();
-void hapusProduk();
-void hapusStok();
-void lihatDaftarProduk();
-void editHarga();
-void hapusToko();
-void editNamaToko();
-void editAlamatToko();
-void editTeleponToko();
-void lihatDaftarToko();
-void distribusiProduk();
-void catatTransaksi(string jenis, string namaProduk, string namaToko, int jumlah, double harga);
-void lihatHistoryTransaksi();
+// Arrays untuk pencatatan penjualan
+string penjualanProduk[1000];
+int penjualanJumlah[1000];
+double penjualanTotal[1000];
+int jumlahPenjualan = 0;
 
-// Function implementations
 void tambahProduk() {
     if (jumlahProduk >= 100) {
-        cout << "Kapasitas produk penuh!\n";
+        cout << "Kapasitas penuh!\n";
         return;
     }
 
-    cout << "\n=== Tambah Produk Baru ===\n";
-    cout << "> Masukkan nama produk: ";
+    cout << "\n== Tambah Produk ==\n";
+    cout << "Nama produk: ";
     cin.ignore();
-    getline(cin, produk[jumlahProduk].nama);
+    getline(cin, namaProduk[jumlahProduk]);
 
-    cout << "> Masukkan jumlah stok awal: ";
-    cin >> produk[jumlahProduk].stok;
+    cout << "Jumlah stok: ";
+    cin >> stokProduk[jumlahProduk];
 
-    cout << "> Masukkan harga produk: Rp ";
-    cin >> produk[jumlahProduk].harga;
+    cout << "Harga: Rp ";
+    cin >> hargaProduk[jumlahProduk];
 
     jumlahProduk++;
-    cout << "\nProduk berhasil ditambahkan!\n";
+    cout << "Produk berhasil ditambahkan!\n";
 }
 
-void tambahToko() {
-    if (jumlahToko >= 100) {
-        cout << "Kapasitas toko penuh!\n";
+void lihatProduk() {
+    if (jumlahProduk == 0) {
+        cout << "Tidak ada produk!\n";
         return;
     }
 
-    cout << "\n=== Tambah Toko Baru ===\n";
-    cout << "> Masukkan nama toko: ";
-    cin.ignore();
-    getline(cin, toko[jumlahToko].nama);
+    cout << "\n== Daftar Produk ==\n";
+    cout << "No | Nama Produk | Stok | Harga\n";
+    cout << "--------------------------------\n";
 
-    cout << "> Masukkan alamat toko: ";
-    getline(cin, toko[jumlahToko].alamat);
-
-    cout << "> Masukkan nomor telepon toko: ";
-    getline(cin, toko[jumlahToko].telepon);
-
-    jumlahToko++;
-    cout << "\nToko berhasil ditambahkan!\n";
+    for (int i = 0; i < jumlahProduk; i++) {
+        cout << (i + 1) << ". " << namaProduk[i] << " | "
+            << stokProduk[i] << " | Rp "
+            << hargaProduk[i] << endl;
+    }
 }
 
 void tambahStok() {
     if (jumlahProduk == 0) {
-        cout << "\nTidak ada produk yang tersedia.\n";
+        cout << "Tidak ada produk!\n";
         return;
     }
 
-    cout << "\n=== Tambah Stok Produk ===\n";
-    cout << "\nDaftar Produk:\n";
-    for (int i = 0; i < jumlahProduk; i++) {
-        cout << i + 1 << ". " << produk[i].nama
-            << " (Stok: " << produk[i].stok
-            << ", Harga: Rp " << fixed << setprecision(2) << produk[i].harga << ")\n";
-    }
-
+    lihatProduk();
     int pilihan, tambahan;
-    cout << "\n> Pilih nomor produk (1-" << jumlahProduk << "): ";
+    cout << "Pilih nomor produk: ";
     cin >> pilihan;
 
     if (pilihan < 1 || pilihan > jumlahProduk) {
-        cout << "Pilihan tidak valid!\n";
+        cout << "Produk tidak valid!\n";
         return;
     }
 
-    cout << "> Masukkan jumlah stok yang ditambahkan: ";
+    cout << "Jumlah tambahan: ";
     cin >> tambahan;
 
     if (tambahan <= 0) {
-        cout << "Jumlah stok tidak valid!\n";
+        cout << "Jumlah tidak valid!\n";
         return;
     }
 
-    produk[pilihan - 1].stok += tambahan;
+    stokProduk[pilihan - 1] += tambahan;
+    cout << "Stok berhasil ditambahkan!\n";
+}
 
-    catatTransaksi("Stok Masuk",
-        produk[pilihan - 1].nama,
-        "",
-        tambahan,
-        produk[pilihan - 1].harga);
+void kurangiStok() {
+    if (jumlahProduk == 0) {
+        cout << "Tidak ada produk!\n";
+        return;
+    }
 
-    cout << "\nStok berhasil ditambahkan!\n";
+    void lihatProduk();
+    int pilihan, kurang;
+    cout << "Pilih nomor produk: ";
+    cin >> pilihan;
+
+    if (pilihan < 1 || pilihan > jumlahProduk) {
+        cout << "Produk tidak valid!\n";
+        return;
+    }
+
+    cout << "Jumlah pengurangan: ";
+    cin >> kurang;
+
+    if (kurang <= 0 || kurang > stokProduk[pilihan - 1]) {
+        cout << "Jumlah tidak valid!\n";
+        return;
+    }
+
+    stokProduk[pilihan - 1] -= kurang;
+    cout << "Stok berhasil dikurangi!\n";
 }
 
 void hapusProduk() {
     if (jumlahProduk == 0) {
-        cout << "\nTidak ada produk yang tersedia.\n";
+        cout << "Tidak ada produk!\n";
         return;
     }
 
-    cout << "\n=== Hapus Produk ===\n";
-    cout << "\nDaftar Produk:\n";
-    for (int i = 0; i < jumlahProduk; i++) {
-        cout << i + 1 << ". " << produk[i].nama
-            << " (Stok: " << produk[i].stok
-            << ", Harga: Rp " << fixed << setprecision(2) << produk[i].harga << ")\n";
-    }
-
+    lihatProduk();
     int pilihan;
-    cout << "\n> Pilih nomor produk yang akan dihapus (1-" << jumlahProduk << "): ";
+    cout << "Pilih nomor produk yang akan dihapus: ";
     cin >> pilihan;
 
     if (pilihan < 1 || pilihan > jumlahProduk) {
-        cout << "Pilihan tidak valid!\n";
+        cout << "Produk tidak valid!\n";
         return;
     }
-
-    string namaProduk = produk[pilihan - 1].nama;
 
     for (int i = pilihan - 1; i < jumlahProduk - 1; i++) {
-        produk[i] = produk[i + 1];
+        namaProduk[i] = namaProduk[i + 1];
+        stokProduk[i] = stokProduk[i + 1];
+        hargaProduk[i] = hargaProduk[i + 1];
     }
     jumlahProduk--;
-
-    cout << "\nProduk " << namaProduk << " berhasil dihapus!\n";
+    cout << "Produk berhasil dihapus!\n";
 }
 
-void hapusStok() {
+void ubahHarga() {
     if (jumlahProduk == 0) {
-        cout << "\nTidak ada produk yang tersedia.\n";
+        cout << "Tidak ada produk!\n";
         return;
     }
 
-    cout << "\n=== Kurangi Stok Produk ===\n";
-    cout << "\nDaftar Produk:\n";
-    for (int i = 0; i < jumlahProduk; i++) {
-        cout << i + 1 << ". " << produk[i].nama
-            << " (Stok: " << produk[i].stok
-            << ", Harga: Rp " << fixed << setprecision(2) << produk[i].harga << ")\n";
-    }
-
-    int pilihan, pengurangan;
-    cout << "\n> Pilih nomor produk (1-" << jumlahProduk << "): ";
+    lihatProduk();
+    int pilihan;
+    cout << "Pilih nomor produk: ";
     cin >> pilihan;
 
     if (pilihan < 1 || pilihan > jumlahProduk) {
-        cout << "Pilihan tidak valid!\n";
+        cout << "Produk tidak valid!\n";
         return;
     }
 
-    cout << "> Masukkan jumlah stok yang dikurangi: ";
-    cin >> pengurangan;
-
-    if (pengurangan <= 0) {
-        cout << "Jumlah pengurangan tidak valid!\n";
-        return;
-    }
-
-    if (produk[pilihan - 1].stok < pengurangan) {
-        cout << "Stok tidak mencukupi!\n";
-        return;
-    }
-
-    produk[pilihan - 1].stok -= pengurangan;
-
-    catatTransaksi("Stok Keluar",
-        produk[pilihan - 1].nama,
-        "",
-        pengurangan,
-        produk[pilihan - 1].harga);
-
-    cout << "\nStok berhasil dikurangi!\n";
+    cout << "Masukkan harga baru: Rp ";
+    cin >> hargaProduk[pilihan - 1];
+    cout << "Harga berhasil diubah!\n";
 }
 
-void lihatDaftarProduk() {
-    if (jumlahProduk == 0) {
-        cout << "\nTidak ada produk yang tersedia.\n";
+void transaksi() {
+    if (jumlahProduk <= 0) {
+        cout << "Tidak ada produk tersedia!\n";
         return;
     }
 
-    cout << "\n=== Daftar Produk ===\n";
-    cout << setw(5) << "No" << setw(20) << "Nama Produk"
-        << setw(10) << "Stok" << setw(15) << "Harga\n";
-    cout << string(50, '-') << endl;
+    cout << "\n=== TRANSAKSI BARU ===\n";
+    lihatProduk();
 
-    for (int i = 0; i < jumlahProduk; i++) {
-        cout << setw(5) << i + 1
-            << setw(20) << produk[i].nama
-            << setw(10) << produk[i].stok
-            << setw(15) << "Rp " << fixed << setprecision(2) << produk[i].harga << endl;
-    }
-}
-
-void editHarga() {
-    if (jumlahProduk == 0) {
-        cout << "\nTidak ada produk yang tersedia.\n";
-        return;
-    }
-
-    cout << "\n=== Ubah Harga Produk ===\n";
-    lihatDaftarProduk();
-
-    int pilihan;
-    cout << "\n> Pilih nomor produk (1-" << jumlahProduk << "): ";
-    cin >> pilihan;
-
-    if (pilihan < 1 || pilihan > jumlahProduk) {
-        cout << "Pilihan tidak valid!\n";
-        return;
-    }
-
-    double hargaBaru;
-    cout << "> Masukkan harga baru untuk " << produk[pilihan - 1].nama << ": Rp ";
-    cin >> hargaBaru;
-
-    if (hargaBaru <= 0) {
-        cout << "Harga tidak valid!\n";
-        return;
-    }
-
-    produk[pilihan - 1].harga = hargaBaru;
-    cout << "\nHarga berhasil diperbarui!\n";
-}
-
-void hapusToko() {
-    if (jumlahToko == 0) {
-        cout << "\nTidak ada toko yang tersedia.\n";
-        return;
-    }
-
-    cout << "\n=== Hapus Toko ===\n";
-    lihatDaftarToko();
-
-    int pilihan;
-    cout << "\n> Pilih nomor toko yang akan dihapus (1-" << jumlahToko << "): ";
-    cin >> pilihan;
-
-    if (pilihan < 1 || pilihan > jumlahToko) {
-        cout << "Pilihan tidak valid!\n";
-        return;
-    }
-
-    string namaToko = toko[pilihan - 1].nama;
-
-    for (int i = pilihan - 1; i < jumlahToko - 1; i++) {
-        toko[i] = toko[i + 1];
-    }
-    jumlahToko--;
-
-    cout << "\nToko " << namaToko << " berhasil dihapus!\n";
-}
-
-void editNamaToko() {
-    if (jumlahToko == 0) {
-        cout << "\nTidak ada toko yang tersedia.\n";
-        return;
-    }
-
-    cout << "\n=== Ubah Nama Toko ===\n";
-    lihatDaftarToko();
-
-    int pilihan;
-    cout << "\n> Pilih nomor toko (1-" << jumlahToko << "): ";
-    cin >> pilihan;
-
-    if (pilihan < 1 || pilihan > jumlahToko) {
-        cout << "Pilihan tidak valid!\n";
-        return;
-    }
-
-    cout << "> Masukkan nama baru untuk toko: ";
-    cin.ignore();
-    getline(cin, toko[pilihan - 1].nama);
-
-    cout << "\nNama toko berhasil diperbarui!\n";
-}
-
-void editAlamatToko() {
-    if (jumlahToko == 0) {
-        cout << "\nTidak ada toko yang tersedia.\n";
-        return;
-    }
-
-    cout << "\n=== Ubah Alamat Toko ===\n";
-    lihatDaftarToko();
-
-    int pilihan;
-    cout << "\n> Pilih nomor toko (1-" << jumlahToko << "): ";
-    cin >> pilihan;
-
-    if (pilihan < 1 || pilihan > jumlahToko) {
-        cout << "Pilihan tidak valid!\n";
-        return;
-    }
-
-    cout << "> Masukkan alamat baru untuk toko: ";
-    cin.ignore();
-    getline(cin, toko[pilihan - 1].alamat);
-
-    cout << "\nAlamat toko berhasil diperbarui!\n";
-}
-
-void editTeleponToko() {
-    if (jumlahToko == 0) {
-        cout << "\nTidak ada toko yang tersedia.\n";
-        return;
-    }
-
-    cout << "\n=== Ubah Nomor Telepon Toko ===\n";
-    lihatDaftarToko();
-
-    int pilihan;
-    cout << "\n> Pilih nomor toko (1-" << jumlahToko << "): ";
-    cin >> pilihan;
-
-    if (pilihan < 1 || pilihan > jumlahToko) {
-        cout << "Pilihan tidak valid!\n";
-        return;
-    }
-
-    cout << "> Masukkan nomor telepon baru untuk toko: ";
-    cin.ignore();
-    getline(cin, toko[pilihan - 1].telepon);
-
-    cout << "\nNomor telepon toko berhasil diperbarui!\n";
-}
-
-void lihatDaftarToko() {
-    if (jumlahToko == 0) {
-        cout << "\nTidak ada toko yang tersedia.\n";
-        return;
-    }
-
-    cout << "\n=== Daftar Toko ===\n";
-    cout << setw(5) << "No" << setw(20) << "Nama Toko"
-        << setw(15) << "Telepon" << setw(30) << "Alamat\n";
-    cout << string(70, '-') << endl;
-
-    for (int i = 0; i < jumlahToko; i++) {
-        cout << setw(5) << i + 1
-            << setw(20) << toko[i].nama
-            << setw(15) << toko[i].telepon
-            << setw(30) << toko[i].alamat << endl;
-    }
-}
-
-void distribusiProduk() {
-    if (jumlahToko == 0 || jumlahProduk == 0) {
-        cout << "\nTidak ada toko atau produk yang tersedia.\n";
-        return;
-    }
-
-    cout << "\n=== Distribusi Produk ===\n";
-    lihatDaftarToko();
-
-    int pilihanToko;
-    cout << "\n> Pilih nomor toko (1-" << jumlahToko << "): ";
-    cin >> pilihanToko;
-
-    if (pilihanToko < 1 || pilihanToko > jumlahToko) {
-        cout << "Pilihan toko tidak valid!\n";
-        return;
-    }
-
+    double totalBelanja = 0;
+    string produkDibeli = "";
+    int totalItem = 0;
     char lanjut;
+
     do {
-        cout << "\nDaftar Produk Tersedia:\n";
-        for (int i = 0; i < jumlahProduk; i++) {
-            cout << i + 1 << ". " << produk[i].nama
-                << " (Stok: " << produk[i].stok
-                << ", Harga: Rp " << fixed << setprecision(2) << produk[i].harga << ")\n";
-        }
+        int pilihan, jumlah;
+        cout << "\nPilih nomor produk: ";
+        cin >> pilihan;
 
-        int pilihanProduk;
-        cout << "\n> Pilih nomor produk (1-" << jumlahProduk << "): ";
-        cin >> pilihanProduk;
-
-        if (pilihanProduk < 1 || pilihanProduk > jumlahProduk) {
-            cout << "Pilihan produk tidak valid!\n";
+        if (pilihan < 1 || pilihan > jumlahProduk) {
+            cout << "Produk tidak valid!\n";
             continue;
         }
 
-        int jumlah;
-        cout << "> Masukkan jumlah yang akan didistribusikan: ";
+        cout << "Jumlah dibeli: ";
         cin >> jumlah;
 
-        if (jumlah <= 0) {
-            cout << "Jumlah tidak valid!\n";
+        if (jumlah <= 0 || jumlah > stokProduk[pilihan - 1]) {
+            cout << "Jumlah tidak valid atau stok tidak cukup!\n";
             continue;
         }
 
-        if (produk[pilihanProduk - 1].stok < jumlah) {
-            cout << "Stok tidak mencukupi!\n";
-            continue;
-        }
+        double subtotal = hargaProduk[pilihan - 1] * jumlah;
+        totalBelanja += subtotal;
+        stokProduk[pilihan - 1] -= jumlah;
+        totalItem += jumlah;
 
-        // Kurangi stok
-        produk[pilihanProduk - 1].stok -= jumlah;
+        produkDibeli += namaProduk[pilihan - 1] + "(" + to_string(jumlah) + ") ";
 
-        // Catat transaksi
-        catatTransaksi("Distribusi",
-            produk[pilihanProduk - 1].nama,
-            toko[pilihanToko - 1].nama,
-            jumlah,
-            produk[pilihanProduk - 1].harga);
+        cout << "Subtotal: Rp " << subtotal << endl;
 
-        cout << "\nBerhasil mendistribusikan " << jumlah << " "
-            << produk[pilihanProduk - 1].nama << " ke "
-            << toko[pilihanToko - 1].nama << endl;
-
-        cout << "\nIngin mendistribusikan produk lain ke toko yang sama? (y/n): ";
+        cout << "Tambah produk lain? (y/n): ";
         cin >> lanjut;
-
     } while (lanjut == 'y' || lanjut == 'Y');
+
+    cout << "\n=== RINGKASAN TRANSAKSI ===\n";
+    cout << "Total Item: " << totalItem << endl;
+    cout << "Total Belanja: Rp " << totalBelanja << endl;
+
+    double bayar;
+    do {
+        cout << "Jumlah Pembayaran: Rp ";
+        cin >> bayar;
+        if (bayar < totalBelanja) {
+            cout << "Pembayaran kurang!\n";
+        }
+    } while (bayar < totalBelanja);
+
+    cout << "Kembalian: Rp " << (bayar - totalBelanja) << endl;
+
+    penjualanProduk[jumlahPenjualan] = produkDibeli;
+    penjualanJumlah[jumlahPenjualan] = totalItem;
+    penjualanTotal[jumlahPenjualan] = totalBelanja;
+    jumlahPenjualan++;
+
+    cout << "Transaksi Selesai!\n";
 }
 
-void catatTransaksi(string jenis, string namaProduk, string namaToko, int jumlah, double harga) {
-    if (jumlahTransaksi >= 1000) {
-        cout << "Peringatan: Kapasitas history transaksi penuh!\n";
+void laporanPenjualan() {
+    if (jumlahPenjualan == 0) { // Perbaikan kondisi di sini
+        cout << "\nBelum ada penjualan tercatat.\n";
         return;
     }
 
-    transaksi[jumlahTransaksi].waktu = time(0);
-    transaksi[jumlahTransaksi].jenis = jenis;
-    transaksi[jumlahTransaksi].namaProduk = namaProduk;
-    transaksi[jumlahTransaksi].namaToko = namaToko;
-    transaksi[jumlahTransaksi].jumlah = jumlah;
-    transaksi[jumlahTransaksi].harga = harga;
-    jumlahTransaksi++;
+    cout << "\n=== LAPORAN PENJUALAN ===\n";
+    cout << "No | Produk | Jumlah | Total\n";
+    cout << "--------------------------------\n";
+
+    double totalPendapatan = 0;
+    int totalTerjual = 0;
+
+    for (int i = 0; i < jumlahPenjualan; i++) {
+        cout << (i + 1) << ". " << penjualanProduk[i] << " | "
+            << penjualanJumlah[i] << " | Rp "
+            << penjualanTotal[i] << endl;
+
+        totalPendapatan += penjualanTotal[i];
+        totalTerjual += penjualanJumlah[i];
+    }
+
+    cout << "--------------------------------\n";
+    cout << "Total Produk Terjual: " << totalTerjual << endl;
+    cout << "Total Pendapatan: Rp " << totalPendapatan << endl;
 }
 
-void lihatHistoryTransaksi() {
-    if (jumlahTransaksi == 0) {
-        cout << "\nBelum ada transaksi yang tercatat.\n";
+void laporanStok() {
+    if (jumlahProduk == 0) {
+        cout << "\nTidak ada produk tersedia.\n";
         return;
     }
 
-    cout << "\n=== History Transaksi ===\n\n";
-    cout << setw(25) << "Waktu"
-        << setw(15) << "Jenis"
-        << setw(20) << "Produk"
-        << setw(20) << "Toko"
-        << setw(10) << "Jumlah"
-        << setw(15) << "Total Harga\n";
-    cout << string(105, '-') << endl;
+    cout << "\n=== LAPORAN STOK ===\n";
+    cout << "No | Produk | Stok | Harga | Nilai Stok\n";
+    cout << "--------------------------------\n";
 
-    for (int i = 0; i < jumlahTransaksi; i++) {
-        char* waktu = ctime(&transaksi[i].waktu);
-        waktu[24] = '\0'; // Menghapus newline dari string waktu
+    double totalNilaiStok = 0.0;
+    int totalStok = 0;
 
-        cout << setw(25) << waktu
-            << setw(15) << transaksi[i].jenis
-            << setw(20) << transaksi[i].namaProduk
-            << setw(20) << (transaksi[i].namaToko.empty() ? "-" : transaksi[i].namaToko)
-            << setw(10) << transaksi[i].jumlah
-            << setw(15) << "Rp " << fixed << setprecision(2)
-            << transaksi[i].jumlah * transaksi[i].harga
-            << endl;
+    for (int i = 0; i < jumlahProduk; i++) {
+
+        if (stokProduk[i] < 0 || hargaProduk[i] < 0) {
+            cout << "Error: Stok atau harga produk tidak valid untuk produk ke-" << (i + 1) << endl;
+            continue;
+        }
+
+        double nilaiStok = static_cast<double>(stokProduk[i]) * hargaProduk[i];
+        cout << (i + 1) << ". " << namaProduk[i] << " | "
+            << stokProduk[i] << " | Rp "
+            << hargaProduk[i] << " | Rp "
+            << nilaiStok << endl;
+
+        totalNilaiStok += nilaiStok;
+        totalStok += stokProduk[i];
     }
+
+    cout << "--------------------------------\n";
+    cout << "Total Stok: " << totalStok << endl;
+    cout << "Total Nilai Stok: Rp " << totalNilaiStok << endl;
 }
+
 
 int main() {
     int pilihan;
 
-    cout << "\n=== SISTEM MANAJEMEN INVENTORI ===\n";
-
     do {
-        cout << "\nMenu Utama:\n";
-        cout << "1. Kelola Produk\n";
-        cout << "2. Kelola Toko\n";
-        cout << "3. Distribusi Produk\n";
-        cout << "4. History Transaksi\n";
-        cout << "5. Keluar\n";
-        cout << "\n> Pilihan Anda: ";
+        cout << "\n=== SISTEM INVENTORI DAN PENJUALAN ===\n";
+        cout << "1. Tambah Produk\n";
+        cout << "2. Tambah Stok\n";
+        cout << "3. Kurangi Stok\n";
+        cout << "4. Lihat Produk\n";
+        cout << "5. Hapus Produk\n";
+        cout << "6. Ubah Harga\n";
+        cout << "7. Transaksi\n";
+        cout << "8. Laporan Penjualan\n";
+        cout << "9. Laporan Stok\n";
+        cout << "10. Keluar\n";
+        cout << "> Pilihan: ";
         cin >> pilihan;
 
         switch (pilihan) {
-        case 1: {
-            int subPilihan;
-            do {
-                cout << "\nMenu Kelola Produk:\n";
-                cout << "1. Tambah Produk Baru\n";
-                cout << "2. Tambah Stok\n";
-                cout << "3. Hapus Produk\n";
-                cout << "4. Kurangi Stok\n";
-                cout << "5. Ubah Harga\n";
-                cout << "6. Lihat Daftar Produk\n";
-                cout << "7. Kembali ke Menu Utama\n";
-                cout << "\n> Pilihan Anda: ";
-                cin >> subPilihan;
-
-                switch (subPilihan) {
-                case 1: tambahProduk(); break;
-                case 2: tambahStok(); break;
-                case 3: hapusProduk(); break;
-                case 4: hapusStok(); break;
-                case 5: editHarga(); break;
-                case 6: lihatDaftarProduk(); break;
-                case 7: cout << "Kembali ke menu utama...\n"; break;
-                default: cout << "Pilihan tidak valid!\n";
-                }
-            } while (subPilihan != 7);
-            break;
-        }
-        case 2: {
-            int subPilihan;
-            do {
-                cout << "\nMenu Kelola Toko:\n";
-                cout << "1. Tambah Toko\n";
-                cout << "2. Hapus Toko\n";
-                cout << "3. Ubah Nama Toko\n";
-                cout << "4. Ubah Nomor Telepon\n";
-                cout << "5. Ubah Alamat\n";
-                cout << "6. Lihat Daftar Toko\n";
-                cout << "7. Kembali ke Menu Utama\n";
-                cout << "\n> Pilihan Anda: ";
-                cin >> subPilihan;
-
-                switch (subPilihan) {
-                case 1: tambahToko(); break;
-                case 2: hapusToko(); break;
-                case 3: editNamaToko(); break;
-                case 4: editTeleponToko(); break;
-                case 5: editAlamatToko(); break;
-                case 6: lihatDaftarToko(); break;
-                case 7: cout << "Kembali ke menu utama...\n"; break;
-                default: cout << "Pilihan tidak valid!\n";
-                }
-            } while (subPilihan != 7);
-            break;
-        }
-        case 3: distribusiProduk(); break;
-        case 4: lihatHistoryTransaksi(); break;
-        case 5: cout << "\nTerima kasih telah menggunakan sistem ini!\n"; break;
+        case 1: tambahProduk(); break;
+        case 2: tambahStok(); break;
+        case 3: kurangiStok(); break;
+        case 4: lihatProduk(); break;
+        case 5: hapusProduk(); break;
+        case 6: ubahHarga(); break;
+        case 7: transaksi(); break;
+        case 8: laporanPenjualan(); break;
+        case 9: laporanStok(); break;
+        case 10: cout << "\nTerima kasih telah menggunakan sistem ini!\n"; break;
         default: cout << "Pilihan tidak valid!\n";
         }
-    } while (pilihan != 5);
+    } while (pilihan != 10);
 
     return 0;
 }
